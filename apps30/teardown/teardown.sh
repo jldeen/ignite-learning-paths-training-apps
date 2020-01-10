@@ -2,7 +2,7 @@
 set -e
 
 # variables
-resourceGroup=igniteapps30jd
+resourceGroup=igniteapps30
 subName="Ignite The Tour"
 
 # set subscription for script to run against
