@@ -176,7 +176,7 @@ A description of the variables, as well as their default values, can be found be
 
 | Variable Name          | Default Value         | Description              |
 |-------------------|----------------------------------|------------------- |
-| spName           | tailwindtraders30 | Name of the service principal used for GitHub Actions 
+| spName           | tailwindtraders30 | Name of the service principal used for GitHub Actions; one will be created for you by default 
 | resourceGroup            | igniteapps30 | Name of the resource group used
 | subName           | "Ignite The Tour" | Name of the subscription where all resources will be deployed
 | location           | eastus | Azure region used for all resources
@@ -186,7 +186,6 @@ A description of the variables, as well as their default values, can be found be
 | adminPassword          | twtapps30pD | Name of the SQL admin user password
 | acrName           | igniteapps30acr | Name of the Azure Container Registry. This name has to be unique.
 | webappName          | igniteapps30 | Name of the Azure webapp and App Service Plan
-
 
 The scripts will produce the following values for you to set as secrets in your GitHub Actions workflow.
 
@@ -199,6 +198,24 @@ The scripts will produce the following values for you to set as secrets in your 
 - REGISTRY_USERNAME
 - REGISTRY_PASSWORD
 
+Note: `AZURE_CREDENTIALS` will produce a value like this. The entire json snippet is your GitHub Secret - copy all of it to your clipboard:
+```
+{
+  "clientId": "ba99fdsa-fdas9jfaf-fjkdajf989-fjdkafjs",
+  "clientSecret": "989f9ja-fjdsf-fjkd-fmmk-jaflsjdf",
+  "subscriptionId": "cd400f31-6f94-40ab-863a-673192a3c0d0",
+  "tenantId": "98ijkaf-fjkaf9-fjkmmmk-kjaki9kalm",
+  "activeDirectoryEndpointUrl": "https://login.microsoftonline.com",
+  "resourceManagerEndpointUrl": "https://management.azure.com/",
+  "activeDirectoryGraphResourceId": "https://graph.windows.net/",
+  "sqlManagementEndpointUrl": "https://management.core.windows.net:8443/",
+  "galleryEndpointUrl": "https://gallery.azure.com/",
+  "managementEndpointUrl": "https://management.core.windows.net/"
+}
+```
+If you already have a service principal you wish to use, simply copy the above snippet and change the values for `clientId`, `clientSecret`, `subscriptionId` and `tenantId`. You can then comment out lines 19-22 of the `get-infra-secrets.sh` and `get-secrets.sh` script and add in `az version > /dev/null` so the following if statement runs successfully.
+
+---
 **FULL CICD Things to Note**
 
 If you use the Full CICD workflow, you will have to run the GitHub Actions workflow twice to have a fully successful build. This is because some of the secrets you need (connection strings and registry information) will not be available until the first job (infraDeploy) completes. To help with this, there is a `get-infra-secrets.sh` shell script that will provide only the following values:
