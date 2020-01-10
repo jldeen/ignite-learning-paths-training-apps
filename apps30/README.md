@@ -38,110 +38,231 @@ Along with the video of the presentation, this document will link to all the ass
 - [Full-length recording of presentation - Director Cut](https://www.youtube.com/watch?v=ISQ7EMTvl4U&feature=youtu.be)
 - [Demo Instructions](https://github.com/microsoft/ignite-learning-paths-training-apps/tree/master/apps30)
 
+---
+
 ## Getting Started
 
-To begin the demo you'll need to do a few things which are described in the TTT video:
+The following Azure Resources are needed to run this demo:
 
-1. Execute a cloud shell
-2. Download the [create-db.sh](https://github.com/microsoft/ignite-learning-paths-training-apps/blob/master/apps30/create-db.sh) script.
-3. Get the [example-notes.txt](example-notes.txt) file for your demonstration live - this will contain your example version of the app you will create live.
-4. You'll need the presentation deck, get the latest from the [presentations.md](presentations.md)
+- Resource Group
+- Virtual Network
+- Cosmos Database (MongoDB)
+- SQL Database (Includes SQL Server Instance, Firewall Rule, and DB)
+- Azure Container Registry
+- Azure App Service Plan **(A Linux App Service Plan is required for WebApp for Containers)** (S1 SKU is recommended)
+- Azure Web App
 
-We'll use these to prep before we go into the session.  Fully build the application at least before the session. Always keep a preview copy ready to go and build what you can as a demonstration live.  You will demonstrate building the databases live, but well remind the audience we're using "cooking show rules."  You will show the process of creating these databases.
+And of course, the web app itself: [TailWind Traders Website](https://github.com/anthonychu/TailwindTraders-Website)
 
-Once you've prepped the app - you're going to build the same app live using the pre-created database information, an incremented name of the app from the one you've created for the demo.
+First, fork this repo - this will help you create the infrastructure. 
 
-IE: My pre-show demo 
+Second, fork the [TailWind Traders Website repo](https://github.com/anthonychu/TailwindTraders-Website) - this is the app you will be deploying into the infrastructure.
 
-```
-az group create --subscription "Ignite The Tour" --name igniteapps30 --location eastus
-```
+You can setup the required resources 3 ways:
 
-What I will create live: resource group creation notes in [example-notes.txt](example-notes.txt)
+- [Azure DevOps Pipeline](azds_pipeline.yml)
+    - If you prefer this method, [click here](#azure-devops-pipeline).
 
-```
-az group create --subscription "Ignite The Tour" --name 001igniteapps30 --location eastus
-```
+- [GitHub Actions Pipeline]()
+    - If you prefer this method, [click here](#github-actions-pipeline).
 
-The incremented name is just to keep it easy to follow.
-
+- Manually via cloud shell or local terminal and the provided [`infraCreate.sh`](scripts/infra_create.sh) script.
+    - If you prefer this method, [click here](#cloud-shell-terminal-infra-setup).
 
 ---
 
-## Creating Resource Group and Databases
+## Azure DevOps Pipeline
 
-Within [create-db.sh](https://github.com/microsoft/ignite-learning-paths-training-apps/blob/master/apps30/create-db.sh) there are a few bash variables to change.
+Install the [Azure Pipelines app](https://github.com/marketplace/azure-pipelines) in your [GitHub](https://github.com/) account
 
-```
-#!/bin/bash
-set -e
+In Azure DevOps under Preview features, enable multi-stage pipelines.
 
-# Credentials
-azureResourceGroup=igniteapps30
-adminUser=twtadmin
-adminPassword=twtapps30pD
-subname=cd400f31-6f94-40ab-863a-673192a3c0d0
-location=eastus
+![multi-stage-example](images/multistage.png)
 
-# DB Name
+Navigate to Piplines and click "Create pipeline."
 
-cosmosdbname=apps30twtnosql
-sqldbname=apps30twtsql
-```
+![first-pipeline](images/first-pipeline.png)
 
-I do the same incrementing of the name for the "live" version.  I create these before hand but then demonstrate how to create from portal.  The versions I do from portal I do not "deploy" - before I "create and deploy" I explain for time we've already created our DB's with Azure SQL and Cosmos DB.
+Under "Where is your Code?" Select GitHub.
 
-Example:
+![where-code](images/where-code.png)
 
-Live Version - 
+Select your fork of this repository.
 
-```
-#!/bin/bash
-set -e
+![fork](images/fork.png)
 
-# Credentials
-azureResourceGroup=igniteapps30
-adminUser=twtadmin
-adminPassword=twtapps30pD
-subname=cd400f31-6f94-40ab-863a-673192a3c0d0
-location=eastus
+Under "Configure your pipeline" select "Existing Azure Pipelines YAML file
 
-# DB Name
+![](images/configure-existing.png)
 
-cosmosdbname=apps30twtnosql
-sqldbname=apps30twtsql
-```
+From there, you can leave the default branch as master. 
 
-Once you've edited the script lets run it in bash Cloud Shell and begin process of building demo.
+You can either use the drop down for path to select the pipeline yml or manually type the path:
 
-```
-bash create-db.sh
-```
+`/apps/30/azds_pipeline.yml`
 
-This should take about 15 minutes for both DBs to create.
+![](images/existing-yml-path.png)
 
-Collect both connection strings to put in the VARs for the container to connect to the database.
+Hit continue when you're done.
 
-## Next Steps
+**Note:** There are two Azure DevOps pipelines. `azds_pipeline.yml` will deploy all resources needed for this demo; `teardown/teardown.azds_pipeline.yml` will tear down all resources for this demo.
 
-Go through the opening of the talk with the application fully built in the background.  Keep two portals up, one with the "complete" version of the app, one of the resource group you're going to build live.  You'll want to show them the difference and how you're creating the resources live as you're explaining each part.
+The next screen will allow you to review your pipeline and make any necessary changes to the yaml. You can use the web editor to change the variables starting at line 17. You will also need to add `adminUser` and `adminPassword` as secret variables by clicking "Variables" in the top right next to "Run."
+
+![](images/variables.png)
+
+Under variables, click "New Variable."
+
+![](images/new-var.png)
+
+Enter the name and value of the variable, and be sure to check the box "Keep this value secret" to encrypt the variable.
+
+![](images/secret-variable.png)
+
+Once you've added both `adminUser` and `adminPassword` you can click "Save."
+
+![](images/final-var.png)
+
+After you have updated all inline variables for the pipeline, you can click "Save and Run."
+
+![](images/saverun1.png)
+
+This will bring up a second popup where you will commit your new changes directly to your master branch (or any branch of your choice) and then run the pipeline! Be sure to click "Save and Run" again to fire off the pipeline.
+
+![](images/saverun2.png)
+
+This will take about 15 minutes to deploy and once it completes, you can proceed with deploying the web app itself using GitHub Actions.
+
+![](images/complete.png)
+
+---
+
+## GitHub Actions Pipeline
+
+**We will be using the [TailWind Traders web application repo](https://github.com/anthonychu/TailwindTraders-Website) for this section since the code we need, including the GitHub Actions workflow lives there.**
+
+As of the time of this update (January 2019), [GitHub Actions](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/about-github-actions) does not support on demand run for an Actions workflow. With that in mind, it is probably easier to keep the infrastructure deployment as part of a controlled pipeline using Azure DevOps, but we have included the GitHub Actions infra deploy job as a bonus. 
+
+Also, because of how GitHub Actions workflows work, the workflow needs to be in the root of the repo. 
+
+There are two workflows you can use. One will deploy everything: the infrastructure and web app `apps30-full-CICD.yml`. One will deploy just the web app, depending on your preference `apps30-app-CICD.yml`.
+
+You will find the workflows in the IaC folder of this repo. 
+
+You will want to chose the one you wish to use (full or just app deploy) and run `mkdir -p .github/workflows` in the **TailWind Traders Repo** to make the necessary GitHub workflow folder. From there, copy the the workflow you chose into the new folder in the **TailWind Traders Repo** you just created.
+
+In order for either workflow to work, you will need to add secrets under Settings in your fork. You can learn how to add secrets to your GitHub Repo [here](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/creating-and-using-encrypted-secrets).
+
+We have created simple scripts [Get Infra Secrets](scripts/get-infra-secrets.sh) and [Get all Secrets](get-secrets.sh) to help with this.
+
+Before running the script, you will want to update lines 9-18 of the script with your desired variables. These should the variables on lines 6-12 on your desired workflow.
+
+It is also recommended to setup your own self hosted GitHub actions runner to help with time of repeated runs. You can learn more about how to do that [here](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/adding-self-hosted-runners).
+
+A description of the variables, as well as their default values, can be found below.
+
+| Variable Name          | Default Value         | Description              |
+|-------------------|----------------------------------|------------------- |
+| spName           | tailwindtraders30 | Name of the service principal used for GitHub Actions 
+| resourceGroup            | igniteapps30 | Name of the resource group used
+| subName           | "Ignite The Tour" | Name of the subscription where all resources will be deployed
+| location           | eastus | Azure region used for all resources
+| cosmosDBName          | apps30twtnosql | Name of the mongoDB/Cosmos DB instance
+| sqlDBName          | apps30twtsql | Name of the SQL DB instance
+| adminUser           | twtadmin | Name of the SQL admin user
+| adminPassword          | twtapps30pD | Name of the SQL admin user password
+| acrName           | igniteapps30acr | Name of the Azure Container Registry. This name has to be unique.
+| webappName          | igniteapps30 | Name of the Azure webapp and App Service Plan
+
+
+The scripts will produce the following values for you to set as secrets in your GitHub Actions workflow.
+
+- AZURE_CREDENTIALS
+- SQL_ADMIN
+- SQL_PASSWORD
+- MONGODB_CONNECTION_STRING
+- SQL_CONNECTION_STRING
+- CONTAINER_REGISTRY
+- REGISTRY_USERNAME
+- REGISTRY_PASSWORD
+
+**FULL CICD Things to Note**
+
+If you use the Full CICD workflow, you will have to run the GitHub Actions workflow twice to have a fully successful build. This is because some of the secrets you need (connection strings and registry information) will not be available until the first job (infraDeploy) completes. To help with this, there is a `get-infra-secrets.sh` shell script that will provide only the following values:
+
+- AZURE_CREDENTIALS
+- SQL_ADMIN
+- SQL_PASSWORD
+
+This will allow you to start the workflow and create the infrastructure using the first job of the workflow. Once the `deployInfra` job completes and the `buildContainer` job begins (expect the second job to fail due to missing secrets), run the `get-secrets.sh` script to get the remaining GitHub Secrets. You can leave the existing values for `AZURE_CREDENTIALS`, `SQL_ADMIN`, and `SQL_PASSWORD` as is.
+
+- MONGODB_CONNECTION_STRING
+- SQL_CONNECTION_STRING
+- CONTAINER_REGISTRY
+- REGISTRY_USERNAME
+- REGISTRY_PASSWORD
+
+**Note: `SQL_CONNECTION_STRING` will need to be updated with the provided `SQL_ADMIN` and `SQL_PASSWORD` values.** 
+
+**Example:**
+
+**`SQL_CONNECTION_STRING: Server=tcp:apps30twtsql.database.windows.net,1433;Database=tailwind;User ID=<username>;Password=<password>;Encrypt=true;Connection Timeout=30;`**
+
+**should change to**
+
+**`SQL_CONNECTION_STRING: Server=tcp:apps30twtsql.database.windows.net,1433;Database=tailwind;User ID=twtadmin;Password=twtapps30pD;Encrypt=true;Connection Timeout=30;`**
+
+**Make special note of the changed values for "User Id=" and "Password"**
+
+![](images/fail.png)
+
+Assuming the second job, `buildContainer` has failed and you have added in the remaining secrets, you can re-run all checks and the workflow should complete all 3 jobs.
+
+- deployInfra
+- buildContainer
+- deployContainer
+
+![](images/github-success.png)
+
+Moving forward, the full CICD will run incrementally for the infra part and takes around a minute for the job to complete.
+
+---
+
+## Cloud Shell Terminal Infra Setup
+
+To be added...
+
+---
+
+## Teardown
+
+You can tear down all infrastructure two ways:
+
+- [Azure DevOps Pipeline](teardown/teardown.azds_pipeline.yml)
+    - Create a pipeline just like you did in the [Azure DevOps Pipeline section](#azure-devops-pipeline), only instead of selecting the `azds_pipeline.yml` INSTEAD select the `teardown/teardown.azds_pipeline.yml`
+
+- Manually via cloud shell or local terminal and the provided [`teardown.sh`](teardown/teardown.sh) script.
+    - Run the script in cloud shell or a local terminal session by typing `sh teardown.sh`
+
+---
 
 ## Demoing Live
 
-Run through the demo using [example-notes.txt](example-notes.txt) file.
+A rough demo workflow looks like this:
 
-1. Create Resource Group Cloud Shell (it's already created, but that's fine)
-2. Create VNET in Cloud Shell (then show them the vnet in portal)
-3. Example Create CosmosDB (show them the databases created by create-db.sh in the portal)
-4. Example Create Azure SQL (show them the databases created by create-db.sh in the portal)
-5. Clone repo in Cloud Shell, check into `monolith` branch in notes file
-6. Create ACR in Cloud Shell (show them completed in portal)
-7. ACR BUILD image in Cloud Shell (show them created image in PORTAL)
-8. Create App Service INCLUDING Plan for containers IN PORTAL(CLICK THROUGH STEPS)
+1. Create live demo Resource Group using Azure Cloud Shell
+2. Create live demo VNET in Cloud Shell (then show them the vnet in portal)
+3. Create live demo Create CosmosDB (This will take some time, so you can flip to the version you already created)
+4. Create live demo Azure SQL
+5. Clone repo in Cloud Shell
+6. Create ACR in Cloud Shell
+7. ACR BUILD image in Cloud Shell (show them where to find created image in PORTAL)
+8. Demo how to create App Service INCLUDING Plan for containers IN PORTAL
 9. Select ACR and image in the Web App container settings in IN PORTAL (CLICK THROUGH STEPS)
-10. Show them APPLICATION SETTINGS and then show how to enter envrionment variables (do one), use your pre-show created version to then show all the VARs.
+10. Show them APP SETTINGS and then show how to enter envrionment variables (do one), use your pre-show created version to show all the VARs.
 11. Navigate to "pre-show" app with all settings, show the audience app, including inventory of an item.
-12. Delete both when completed.
+12. Start talking about how while that was pretty easy to get up and running, there were a lot of moving parts. Explain how it can get overwhelming remembering all those steps. Ask the audience, "Wouldn't it be nice if we could truly modernize this and have a way to automate this? Turns out there is." Segway into GitHub Actions and show them the completed GitHub Actions workflow with all 3 jobs. Explain the value behind true modernization by gaining deployment flexibility and repeatable builds - including the underlying infrastructure needed for the app to run.
+13. Delete live demo resource group when finished.
 
 ## Become a Trained Presenter
 
