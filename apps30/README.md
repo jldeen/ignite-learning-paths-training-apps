@@ -157,7 +157,7 @@ We have created simple scripts [Get Infra Secrets](scripts/get-infra-secrets.sh)
 
 Before running the script, you will want to update lines 9-18 of the script with your desired variables. These should the variables on lines 6-12 on your desired workflow.
 
-It is also recommended to setup your own self hosted GitHub actions runner to help with time of repeated runs. You can learn more about how to do that [here](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/adding-self-hosted-runners).
+It is also recommended to setup your own self hosted GitHub actions runner to help with time of repeated runs. You can learn more about how to do that [here](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/adding-self-hosted-runners). Both workflows are setup to run on self-hosted runners and will need to be updated to work with standard linux by changing any mention of `self-hosted` to `ubuntu-latest`.
 
 A description of the variables, as well as their default values, can be found below.
 
