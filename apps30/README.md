@@ -40,7 +40,7 @@ Along with the video of the presentation, this document will link to all the ass
 
 ---
 
-## Getting Started
+## Pre-requisites
 
 The following Azure Resources are needed to run this demo:
 
@@ -53,6 +53,19 @@ The following Azure Resources are needed to run this demo:
 - Azure Web App
 
 And of course, the web app itself: [TailWind Traders Website](https://github.com/anthonychu/TailwindTraders-Website)
+
+Your webapp will need the following appsettings to work:
+
+- apiUrl=/api/v1 
+- ApiUrlShoppingCart=/api/v1 
+- productImagesUrl=https://raw.githubusercontent.com/microsoft/TailwindTraders-Backend/master/Deploy/tailwindtraders-images/product-detail 
+- SqlConnectionString=
+- MongoConnectionString=
+
+**Note: `productImagesUrl` will 404 if you navigate to it manually. This is expected behavior because of the way the app itself is written. The value is correct.
+
+
+## Getting started
 
 First, fork this repo - this will help you create the infrastructure. 
 
