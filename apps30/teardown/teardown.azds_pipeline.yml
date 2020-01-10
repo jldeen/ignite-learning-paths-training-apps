@@ -11,7 +11,7 @@ trigger:
 variables:
 
   # resource group
-  resourceGroup: 'igniteapps30jd'
+  resourceGroup: 'igniteapps30'
 
   # subscription name
   subName: 'Ignite The Tour'

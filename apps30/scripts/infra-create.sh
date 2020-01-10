@@ -3,7 +3,7 @@
 set -e
 
 # Credentials
-azureResourceGroup=igniteapps30jd
+azureResourceGroup=igniteapps30
 adminUser=twtadmin
 adminPassword=twtapps30pD
 subName="Ignite The Tour"
