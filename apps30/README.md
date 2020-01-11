@@ -162,7 +162,7 @@ Also, because of how GitHub Actions workflows work, the workflow needs to be in 
 
 There are two workflows you can use. One will deploy everything: the infrastructure and web app `apps30-full-CICD.yml`. One will deploy just the web app, depending on your preference `apps30-app-CICD.yml`.
 
-You will find the workflows in the IaC folder of this repo and you will need to copy the workflow of your choice to the TailWind Traders repo. 
+You will find the workflows in the [IaC folder](Iac/) of this repo and you will need to copy the workflow of your choice to the TailWind Traders repo. 
 
 Once you have decided on your preferred workflow, run `mkdir -p .github/workflows` in the **TailWind Traders Repo** to make the necessary GitHub workflow folder path. From there, copy the the workflow you chose into the new folder in the **TailWind Traders Repo** you just created.
 
