@@ -9,7 +9,7 @@ adminPassword=twtapps30pD
 subName="Ignite The Tour"
 location=eastus
 # DB Name
-cosmosdbname=apps30twtnosql
+cosmosdbname=apps30twtnosqlge
 sqldbname=apps30twtsql
 acrName=igniteapps30acr
 

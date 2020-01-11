@@ -26,7 +26,7 @@ variables:
   subName: 'Ignite The Tour'
 
   # cosmos db name
-  cosmosdbName: 'apps30twtnosql'
+  cosmosdbName: 'apps30twtnosqlge'
 
   # sql db name
   sqldbName: 'apps30twtsql'

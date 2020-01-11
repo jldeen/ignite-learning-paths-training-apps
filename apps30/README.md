@@ -183,7 +183,7 @@ A description of the variables, as well as their default values, can be found be
 | resourceGroup            | igniteapps30 | Name of the resource group used
 | subName           | "Ignite The Tour" | Name of the subscription where all resources will be deployed
 | location           | eastus | Azure region used for all resources
-| cosmosDBName          | apps30twtnosql | Name of the mongoDB/Cosmos DB instance
+| cosmosDBName          | apps30twtnosqlge | Name of the mongoDB/Cosmos DB instance
 | sqlDBName          | apps30twtsql | Name of the SQL DB instance
 | adminUser           | twtadmin | Name of the SQL admin user
 | adminPassword          | twtapps30pD | Name of the SQL admin user password
@@ -284,9 +284,10 @@ vim IaC/infra-create.sh
 
 sh IaC/infra-create.sh
 ```
+
 Once the infrastructure deployment completes, refer to the [GitHub actions section](#github-actions-pipeline) to deploy the webapp app container.
 
-**Note:** Be sure to use the same variables for your GitHub actions pipeline (and secrets script) as you used for your `IaC/infra-create.sh` script.
+**Note:** Be sure to use the same variables for your GitHub actions pipeline (and secrets script) as you used for your `IaC/infra-create.sh` script. You can use the full CICD workflow since your infrastructure has already been deployed; GitHub actions will incrementally update your infrastructure and continue on to deploying your webapp.
 
 ---
 
