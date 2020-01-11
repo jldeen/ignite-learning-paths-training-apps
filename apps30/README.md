@@ -36,7 +36,7 @@ Along with the video of the presentation, this document will link to all the ass
 - [Full-length recording of presentation](https://globaleventcdn.blob.core.windows.net/assets/apps/apps30/app30-dryrun.mp4)
 - [Full-length recording of from Ignite 2019](https://myignite.techcommunity.microsoft.com/sessions/83032?source=speakerdetail)
 - [Full-length recording of presentation - Director Cut](https://www.youtube.com/watch?v=ISQ7EMTvl4U&feature=youtu.be)
-- [Demo Instructions](https://github.com/microsoft/ignite-learning-paths-training-apps/tree/master/apps30)
+- [Demo Instructions](#demoing-live)
 
 ---
 
@@ -64,7 +64,7 @@ Your webapp will need the following appsettings to work:
 | SqlConnectionString          |  |  
 | MongoConnectionString        |  |  
 
-**Note: `productImagesUrl` will 404 if you navigate to it manually. This is expected behavior because of the way the app itself is written - this is just the base url for product images. The value is correct.
+**Note:** `productImagesUrl` will 404 if you navigate to it manually. This is expected behavior because of the way the app itself is written - this is just the base url for product images. The value is correct.
 
 
 ## Getting started
@@ -79,6 +79,7 @@ You can setup the required resources 3 ways:
     - If you prefer this method, [click here](#azure-devops-pipeline).
 
 - [GitHub Actions Pipeline]()
+    - This method will deploy the web app, as well as the infrastructure (if desired).
     - If you prefer this method, [click here](#github-actions-pipeline).
 
 - Manually via cloud shell or local terminal and the provided [`infraCreate.sh`](scripts/infra_create.sh) script.
@@ -266,7 +267,26 @@ Moving forward, the full CICD will run incrementally for the infra part, which t
 
 ## Cloud Shell Terminal Infra Setup
 
-To be added...
+To deploy your infrastructure from Azure Cloud shell, start a cloud shell instance and run the following commands:
+
+**Note:** Be sure to update the GitHub clone url to your own fork of this repo.
+
+The standup will take about 15 minutes to complete.
+
+```
+mkdir apps30 && cd apps30
+
+git clone https://github.com/<your-github-handle>/ignite-learning-paths-training-apps/
+
+cd ignite-learning-paths-training-apps/apps30
+
+vim IaC/infra-create.sh
+
+sh IaC/infra-create.sh
+```
+Once the infrastructure deployment completes, refer to the [GitHub actions section](#github-actions-pipeline) to deploy the webapp app container.
+
+**Note:** Be sure to use the same variables for your GitHub actions pipeline (and secrets script) as you used for your `IaC/infra-create.sh` script.
 
 ---
 
