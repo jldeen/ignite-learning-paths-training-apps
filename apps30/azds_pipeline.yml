@@ -17,7 +17,7 @@ trigger:
 variables:
 
   # resource group
-  resourceGroup: 'igniteapps30'
+  resourceGroup: 'igniteapps30jd'
 
   # location
   location: 'eastus'
@@ -26,13 +26,13 @@ variables:
   subName: 'Ignite The Tour'
 
   # cosmos db name
-  cosmosdbName: 'apps30twtnosqlge'
+  cosmosdbName: 'apps30twtnosqlgejd'
 
   # sql db name
-  sqldbName: 'apps30twtsql'
+  sqldbName: 'apps30twtsqljd'
 
   # acr name
-  acrName: 'igniteapps30acr'
+  acrName: 'igniteapps30acrjd'
 
 pool:
   vmImage: 'ubuntu-latest'
