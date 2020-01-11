@@ -6,14 +6,14 @@
 set -e
 
 # Set the following
-spName=tailwindtraders30jd
-resourceGroup=igniteapps30jd
+spName=tailwindtraders30
+resourceGroup=igniteapps30
 adminUser=twtadmin
 adminPassword=twtapps30pD
 subName="Ignite The Tour"
-cosmosDBName=apps30twtnosqlgejd
-sqlDBName=apps30twtsqljd
-acrName=igniteapps30acrjd
+cosmosDBName=apps30twtnosqlge
+sqlDBName=apps30twtsql
+acrName=igniteapps30acr
 
 # set the subscription
 az account set --subscription "$subName" && echo "Your default subscription has been set to: $subName"
