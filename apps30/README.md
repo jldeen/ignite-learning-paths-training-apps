@@ -56,13 +56,15 @@ And of course, the web app itself: [TailWind Traders Website](https://github.com
 
 Your webapp will need the following appsettings to work:
 
-- apiUrl=/api/v1 
-- ApiUrlShoppingCart=/api/v1 
-- productImagesUrl=https://raw.githubusercontent.com/microsoft/TailwindTraders-Backend/master/Deploy/tailwindtraders-images/product-detail 
-- SqlConnectionString=
-- MongoConnectionString=
+| Variable Name     | Default Value    |
+|-------------------|---------------------- |
+| apiUrl          | /appi/v1 |  
+| ApiUrlShoppingCart          | /appi/v1 |  
+| productImagesUrl         | https://raw.githubusercontent.com/microsoft/TailwindTraders-Backend/master/Deploy/tailwindtraders-images/product-detail |  
+| SqlConnectionString          |  |  
+| MongoConnectionString        |  |  
 
-**Note: `productImagesUrl` will 404 if you navigate to it manually. This is expected behavior because of the way the app itself is written. The value is correct.
+**Note: `productImagesUrl` will 404 if you navigate to it manually. This is expected behavior because of the way the app itself is written - this is just the base url for product images. The value is correct.
 
 
 ## Getting started
@@ -160,17 +162,17 @@ Also, because of how GitHub Actions workflows work, the workflow needs to be in 
 
 There are two workflows you can use. One will deploy everything: the infrastructure and web app `apps30-full-CICD.yml`. One will deploy just the web app, depending on your preference `apps30-app-CICD.yml`.
 
-You will find the workflows in the IaC folder of this repo. 
+You will find the workflows in the IaC folder of this repo and you will need to copy the workflow of your choice to the TailWind Traders repo. 
 
-You will want to chose the one you wish to use (full or just app deploy) and run `mkdir -p .github/workflows` in the **TailWind Traders Repo** to make the necessary GitHub workflow folder. From there, copy the the workflow you chose into the new folder in the **TailWind Traders Repo** you just created.
+Once you have decided on your preferred workflow, run `mkdir -p .github/workflows` in the **TailWind Traders Repo** to make the necessary GitHub workflow folder path. From there, copy the the workflow you chose into the new folder in the **TailWind Traders Repo** you just created.
 
-In order for either workflow to work, you will need to add secrets under Settings in your fork. You can learn how to add secrets to your GitHub Repo [here](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/creating-and-using-encrypted-secrets).
+In order for either workflow to run successfully, you will need to add secrets under Settings in your fork. You can learn how to add secrets to your GitHub Repo [here](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/creating-and-using-encrypted-secrets).
 
 We have created simple scripts [Get Infra Secrets](scripts/get-infra-secrets.sh) and [Get all Secrets](get-secrets.sh) to help with this.
 
-Before running the script, you will want to update lines 9-18 of the script with your desired variables. These should the variables on lines 6-12 on your desired workflow.
+Before running the script, you will want to update lines 9-18 of the script files with your desired variables. These should the variables on lines 6-12 on your desired workflow.
 
-It is also recommended to setup your own self hosted GitHub actions runner to help with time of repeated runs. You can learn more about how to do that [here](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/adding-self-hosted-runners). Both workflows are setup to run on self-hosted runners and will need to be updated to work with standard linux by changing any mention of `self-hosted` to `ubuntu-latest`.
+It is also recommended to setup your own self hosted GitHub actions runner to help with time of repeated runs, in particular, the time of the Docker build step. You can learn more about how to do that [here](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/adding-self-hosted-runners). Both workflows are setup to run on self-hosted runners and will need to be updated to work with standard linux by changing any mention of `self-hosted` to `ubuntu-latest`.
 
 A description of the variables, as well as their default values, can be found below.
 
@@ -218,13 +220,17 @@ If you already have a service principal you wish to use, simply copy the above s
 ---
 **FULL CICD Things to Note**
 
-If you use the Full CICD workflow, you will have to run the GitHub Actions workflow twice to have a fully successful build. This is because some of the secrets you need (connection strings and registry information) will not be available until the first job (infraDeploy) completes. To help with this, there is a `get-infra-secrets.sh` shell script that will provide only the following values:
+If you use the Full CICD workflow, you will have to run the GitHub Actions workflow twice to have a fully successful build, assuming your infrastructure is being created for the first time. This is because some of the secrets you need (connection strings and registry information) will not be available until the first job (infraDeploy) completes. To help with this, there is a `get-infra-secrets.sh` shell script that will provide only the following values; run this first.
+
+Initial GitHub Secrets needed:
 
 - AZURE_CREDENTIALS
 - SQL_ADMIN
 - SQL_PASSWORD
 
-This will allow you to start the workflow and create the infrastructure using the first job of the workflow. Once the `deployInfra` job completes and the `buildContainer` job begins (expect the second job to fail due to missing secrets), run the `get-secrets.sh` script to get the remaining GitHub Secrets. You can leave the existing values for `AZURE_CREDENTIALS`, `SQL_ADMIN`, and `SQL_PASSWORD` as is.
+This will allow you to start the workflow and create the infrastructure using the first job of the workflow. Once the `deployInfra` job completes and the `buildContainer` job begins (expect the second job to fail due to missing secret values), run the `get-secrets.sh` script to get the remaining GitHub Secrets. You can leave the existing values for `AZURE_CREDENTIALS`, `SQL_ADMIN`, and `SQL_PASSWORD` as is.
+
+Remaining GitHub Secrets needed:
 
 - MONGODB_CONNECTION_STRING
 - SQL_CONNECTION_STRING
@@ -236,13 +242,13 @@ This will allow you to start the workflow and create the infrastructure using th
 
 **Example:**
 
-**`SQL_CONNECTION_STRING: Server=tcp:apps30twtsql.database.windows.net,1433;Database=tailwind;User ID=<username>;Password=<password>;Encrypt=true;Connection Timeout=30;`**
+`SQL_CONNECTION_STRING: Server=tcp:apps30twtsql.database.windows.net,1433;Database=tailwind;User ID=<username>;Password=<password>;Encrypt=true;Connection Timeout=30;`
 
-**should change to**
+should change to
 
-**`SQL_CONNECTION_STRING: Server=tcp:apps30twtsql.database.windows.net,1433;Database=tailwind;User ID=twtadmin;Password=twtapps30pD;Encrypt=true;Connection Timeout=30;`**
+`SQL_CONNECTION_STRING: Server=tcp:apps30twtsql.database.windows.net,1433;Database=tailwind;User ID=twtadmin;Password=twtapps30pD;Encrypt=true;Connection Timeout=30;`
 
-**Make special note of the changed values for "User Id=" and "Password"**
+**Make special note of the changed values for "User Id=" and "Password="**
 
 ![](images/fail.png)
 
@@ -254,7 +260,7 @@ Assuming the second job, `buildContainer` has failed and you have added in the r
 
 ![](images/github-success.png)
 
-Moving forward, the full CICD will run incrementally for the infra part and takes around a minute for the job to complete.
+Moving forward, the full CICD will run incrementally for the infra part, which takes around a minute for the job to complete; the full pipeline takes about 3 minutes to complete when using a self-hosted runner.
 
 ---
 
@@ -291,7 +297,7 @@ A rough demo workflow looks like this:
 9. Select ACR and image in the Web App container settings in IN PORTAL (CLICK THROUGH STEPS)
 10. Show them APP SETTINGS and then show how to enter envrionment variables (do one), use your pre-show created version to show all the VARs.
 11. Navigate to "pre-show" app with all settings, show the audience app, including inventory of an item.
-12. Start talking about how while that was pretty easy to get up and running, there were a lot of moving parts. Explain how it can get overwhelming remembering all those steps. Ask the audience, "Wouldn't it be nice if we could truly modernize this and have a way to automate this? Turns out there is." Segway into GitHub Actions and show them the completed GitHub Actions workflow with all 3 jobs. Explain the value behind true modernization by gaining deployment flexibility and repeatable builds - including the underlying infrastructure needed for the app to run.
+12. Start talking about how while that was pretty easy to get up and running, there were a lot of moving parts. Explain how it can get overwhelming remembering all those steps. Ask the audience, "Wouldn't it be nice if we could truly modernize this and have a way to automate every step? Turns out there is." Segway into GitHub Actions and show them the completed GitHub Actions workflow with all 3 jobs. Explain the value behind true modernization by gaining deployment flexibility and repeatable builds - including the underlying infrastructure needed for the app to run.
 13. Delete live demo resource group when finished.
 
 ## Become a Trained Presenter
